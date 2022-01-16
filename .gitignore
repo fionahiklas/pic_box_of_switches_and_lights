@@ -35,3 +35,6 @@
 /dist/default/
 /dist/
 /build/
+
+# KiCad backup files
+*-backups
