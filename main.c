@@ -63,16 +63,33 @@ void delay(int delay) {
 }
 
 void setup_timer(void) {
-    TMR0 = 0;  // Clear timer0
-    OPTION_REG = 0B00001000; // Setup TMR0 options
-    T0IE = 1;  // Enable overflow interrupt
+    // Clear timer0 so it starts counting from 0
+    TMR0 = 0; 
+    
+    // Setup TMR0 options, prescaler applies to Timer0
+    // set to 1:64 so that gives 16ms "on" time for LEDs
+    // and total time for 16 rows of 256ms or 128ms for 8 rows
+    OPTION_REG = 0B00000101; // Setup TMR0 options
+    
+    // Enable overflow interrupt
+    T0IE = 1;  
 }
 
-
+// TODO: Change this code to interleave LEDs and switch scan signals 
+// TODO: also only use port A for output for the column/scan lines.
+// TODO: Port D can be used for LED outputs (full 8 bits)
+// TODO: Port C is going to be busy with PWM and serial comms
+// TODO: Port E (0:2) or Port B could be used as switch input
 void __interrupt()  isr(void) {
+    // Check if Timer0 overflow interrupt is enabled and if 
+    // the flag is set indicating that was what caused the interrupt
+    // TODO: Refactor to pull this code into another function, ISR 
+    // TODO: may be handling lots of interrupts
     if ( (T0IE == 1) && (T0IF == 1)) {
         T0IF = 0;  // Clear interrupt flag 
         
+        // This is the starting state before the timer is 
+        // setup and interrupts enabled
         if (porta_value == 0 && portd_value == 0) {
             porta_value = 1;
             
