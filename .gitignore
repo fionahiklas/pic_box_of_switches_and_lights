@@ -38,3 +38,11 @@
 
 # KiCad backup files
 *-backups
+fp-info-cache
+
+# Backup files
+*~
+.#*
+\#*
+*.bak
+
